@@ -7,7 +7,7 @@ const {
 } = Astro.props as Props;
 
 interface Props {
-	tag?: String,
+	tag?: keyof astroHTML.JSX.DefinedIntrinsicElements,
 	title?: string,
 	decorative?: boolean,
 	[key: string]: any,
@@ -16,7 +16,7 @@ interface Props {
 const Element = tag;
 ---
 
-<Element class="section" class:list={decorative && "decorative"} {...rest}>
+<Element class="section" class:list={{ decorative }} {...rest}>
 	{title && (
 		<h1 class="section-title">{title}</h1>
 	)}

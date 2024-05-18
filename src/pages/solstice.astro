@@ -59,7 +59,7 @@ import Clover from "../components/Clover.astro";
 				}
 			});
 
-			window.addEventListener("beforeunload", e => {
+			window.addEventListener("beforeunload", () => {
 				if (!shattered) {
 					channel.postMessage("equinox");
 				}
@@ -118,10 +118,10 @@ import Clover from "../components/Clover.astro";
 	</head>
 
 	<body>
-		<img id="tree" alt="Tree" src="solstice.png" />
-		<img id="shattered" alt="Shattered" src="shattered.png" />
+		<img id="tree" alt="Tree" src="/solstice.png" />
+		<img id="shattered" alt="Shattered" src="/shattered.png" />
 		<audio id="music" loop>
-			<source src="Sonder.ogg" type="audio/ogg">
+			<source src="/Sonder.ogg" type="audio/ogg">
 		</audio>
 		<Clover />
 	</body>
