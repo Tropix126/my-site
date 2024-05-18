@@ -1,0 +1,238 @@
+---
+import Header from "../components/Header.astro";
+import Clover from "../components/Clover.astro";
+
+interface Props {
+	title: string;
+	header?: boolean;
+}
+
+const { title, header = true } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+		<script>
+			const channel = new BroadcastChannel("solstice");
+
+			channel.onmessage = e => {
+				if ((e.data === "solstice" || e.data === "solstice-load") && !document.documentElement.classList.contains("solstice")) {
+					document.documentElement.classList.add("solstice");
+				} else if (e.data === "equinox") {
+					document.documentElement.classList.remove("solstice");
+				}
+
+				if (e.data.x) {
+					const zoom = window.outerWidth / window.innerWidth;
+
+					const physicalViewportWidth = window.innerWidth * zoom;
+					const physicalViewportHeight = window.innerHeight * zoom;
+
+					const viewportOffsetX = window.outerWidth - physicalViewportWidth;
+					const viewportOffsetY = window.outerHeight - physicalViewportHeight;
+
+					const corner = {
+						x: window.screenX + viewportOffsetX + physicalViewportWidth,
+						y: window.screenY + viewportOffsetY + physicalViewportHeight,
+					};
+
+					if (Math.abs(corner.x - e.data.x) < 10 && Math.abs(corner.y - e.data.y) < 10 && corner.y !== e.data.y && corner.x !== e.data.x) {
+						channel.postMessage("synchronized");
+					}
+				}
+			}
+			
+			channel.postMessage("load");
+		</script>
+	</head>
+	
+	<body>
+		<main>
+			{header && (
+				<Header
+					title="tropical's site"
+					items={[
+						{
+							name: "stuff",
+							path: "/",
+							external: false,
+						},
+						{
+							name: "archive",
+							path: "/archive",
+							external: false,
+						},
+						{
+							name: "projects",
+							path: "/projects",
+							external: false,
+						},
+					]}
+				/>
+			)}
+			<slot />
+		</main>
+		<Clover />
+	</body>
+</html>
+
+<style>
+	main {
+		margin: auto;
+		width: 925px;
+		max-width: 100%;
+	}
+</style>
+
+<style is:global>
+	:root {
+		font-family: "MS UI Gothic", Tahoma;
+		color-scheme: dark;
+		font-smooth: never;
+		-webkit-font-smoothing: none;
+		
+		--background: #181c2d;
+		--scrollbar-background: #20253c;
+		--border: #868ca2;
+		--foreground: #a5adcf;
+
+		--link: oklch(78.41% 0.126 17.32);
+		--link-visited: oklch(69.31% 0.175 359.9);
+		--link-focused: oklch(82.6% 0.119 59.73);
+
+		--highlight: rgba(52, 63, 133, 0.7);
+
+		--gradient-stop-1: oklch(78.41% 0.126 17.32);
+		--gradient-stop-2: oklch(82.6% 0.119 59.73);
+		--gradient: linear-gradient(135deg, var(--gradient-stop-1), var(--gradient-stop-2));
+	}
+
+	*, *::before, *::after {
+		box-sizing: border-box;
+	}
+
+	html {
+		background: var(--background) url("/royale-downscaled.png") center/cover no-repeat;
+		image-rendering: pixelated;
+		scrollbar-color: var(--border) var(--scrollbar-background);
+		scrollbar-width: thin;
+	}
+
+	body {
+		min-height: 100vh;
+		margin: 0;
+		padding: 48px;
+	}
+
+	ul {
+		list-style-type: "✰   ";
+	}
+
+	hr {
+		margin: 16px 0;
+		border: none;
+		border-top: thin solid var(--border);
+	}
+
+	i {
+		letter-spacing: 2px;
+	}
+
+	i::selection {
+		color: oklch(82.6% 0.119 59.73);
+	}
+	
+	h2 {
+		width: fit-content;
+		position: relative;
+		background: var(--gradient);
+		color: #000;
+		padding: 2px 8px;
+		font-size: 16px;
+		margin-top: 0;
+		margin-bottom: 16px;
+		margin-left: 16px;
+	}
+	
+	h2::before,
+	h2::after {
+		content: "";
+		position: absolute;
+		width: 4px;
+		height: 100%;
+		top: 0;
+		background: var(--gradient-stop-1);
+	}
+
+	h2::before {
+		left: -16px;
+	}
+
+	h2::after {
+		left: -8px;
+	}
+	
+	a {
+		color: var(--link);
+		text-decoration-thickness: 1px;
+	}
+	
+	a:visited {
+		color: var(--link-visited);
+	}
+
+	a:focus {
+		color: var(--link-focused);
+		outline: 1px dotted;
+	}
+
+	::selection {
+		background: var(--highlight);
+	}
+
+	@media only screen and (max-width: 1024px) {
+		body {
+			padding: 24px;
+		}
+	}
+	
+	.solstice {
+		--background: #000;
+		--scrollbar-background: #000;
+		--border: green;
+		--foreground: green;
+
+		--link: green;
+		--link-visited: green;
+		--link-focused: #fff;
+
+		--gradient-stop-1: green;
+		--gradient-stop-2: green;
+
+		background: var(--background);
+	}
+
+	.solstice .decorative img,
+	.solstice .decorative svg,
+	.solstice .decorative marquee {
+		filter: grayscale(1);
+		background: var(--foreground);
+		mix-blend-mode: color-dodge;
+	}
+
+	.clover {
+		display: none;
+	}
+
+	.solstice .clover {
+		display: block;
+	}
+</style>

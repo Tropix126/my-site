@@ -1,0 +1,128 @@
+---
+import Clover from "../components/Clover.astro";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/clover2.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>​</title>
+
+		<script>
+			const channel = new BroadcastChannel("solstice");
+
+			const tree_img = document.getElementById("tree");
+			const clover_img = document.querySelector(".clover");
+			const shattered_img = document.getElementById("shattered");
+			const music = document.getElementById("music") as HTMLAudioElement | null;
+
+			let music_playing = false;
+
+			window.addEventListener("mousedown", () => {
+				if (!music_playing && !shattered) {
+					music_playing = true;
+					music?.play();
+				}
+			});
+
+			let synchronized = false;
+			let shattered = false;
+			let prevPosition = { x: 0, y: 0 };
+
+			channel.postMessage("solstice-load");
+
+			channel.addEventListener("message", e => {
+				if (!shattered) {
+					if (e.data === "load") {
+						channel.postMessage("solstice");
+					} else if (e.data === "solstice-load") {
+						shattered = true;
+						document.title = "□□□□□□□□□";
+						
+						clover_img?.remove();
+						tree_img?.remove();
+						music?.pause();
+	
+						if (shattered_img) {
+							shattered_img.style.display = "block";	
+						}
+	
+						throw new Error("Attempted to construct more than one world.");
+					} else if (e.data === "synchronized" && !synchronized) {
+						synchronized = true;
+						window.location.href = "steam://launch/420530";
+					}
+				}
+			});
+
+			window.addEventListener("beforeunload", e => {
+				if (!shattered) {
+					channel.postMessage("equinox");
+				}
+			});
+
+			setInterval(() => {
+				const zoom = window.outerWidth / window.innerWidth;
+				
+				const physicalViewportWidth = window.innerWidth * zoom;
+				const physicalViewportHeight = window.innerHeight * zoom;
+
+				const viewportOffsetX = window.outerWidth - physicalViewportWidth;
+				const viewportOffsetY = window.outerHeight - physicalViewportHeight;
+				
+				const position = {
+					x: window.screenX + viewportOffsetX + physicalViewportWidth,
+					y: window.screenY + viewportOffsetY + physicalViewportHeight,
+				}
+
+				if (((position.x !== prevPosition.x) || (position.y !== prevPosition.y)) && !shattered) {
+					channel.postMessage(position);
+					prevPosition = position;
+				}
+			}, 250);
+		</script>
+
+		<style>
+
+			html {
+				overflow-y: scroll;
+				scrollbar-color: #000 #000;
+				scrollbar-width: thin;
+			}
+			body {
+				margin: 0;
+				height: 100vh;
+				background: black;
+				image-rendering: pixelated;
+				overflow: hidden;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			#tree {
+				display: block;
+				height: 100%;
+			}
+
+			#shattered {
+				display: none;
+				width: auto;
+				max-width: 50%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<img id="tree" alt="Tree" src="solstice.png" />
+		<img id="shattered" alt="Shattered" src="shattered.png" />
+		<audio id="music" loop>
+			<source src="Sonder.ogg" type="audio/ogg">
+		</audio>
+		<Clover />
+	</body>
+</html>

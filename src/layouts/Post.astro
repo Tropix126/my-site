@@ -1,0 +1,64 @@
+---
+import Layout from "./Layout.astro";
+import Section from "../components/Section.astro";
+
+const { frontmatter } = Astro.props;
+---
+
+<Layout header={false} title="">
+	<Section class="post-header" tag="header">
+		<a class="back" href="/archive">{"<"} Back</a>
+		<h1 class="title">{frontmatter?.title}</h1>
+		<span class="metadata">
+			some metadata ✰ other ✰ other
+		</span>
+	</Section>
+	<Section title="Post" class="post" tag="article" id="post">
+		<slot />
+	</Section>
+</Layout>
+
+<style>
+	.post-header {
+		margin-bottom: 16px;
+	}
+	.post-header :global(.section-contents) {
+		padding: 0;
+		display: flex;
+		align-items: center;
+	}
+
+	.back {
+		display: inline-block;
+		padding: 12px 24px;
+		border-right: 1px solid var(--border);
+		color: var(--foreground);
+		font-size: 10px;
+		text-transform: uppercase;
+		text-decoration: none;
+	}
+
+	.back:hover {
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+	}
+
+	.back:focus {
+		outline: 1px dotted;
+		outline-offset: -5px;
+	}
+
+	.title {
+		margin: 0 16px;
+		font-size: 14px;
+		flex: 1 1 auto;
+	}
+
+	.metadata, .back {
+		flex: 0 0 auto;
+	}
+	
+	.metadata {
+		padding: 0 16px;
+	}
+</style>

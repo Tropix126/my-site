@@ -1,0 +1,1 @@
+<svg xmlns='http://www.w3.org/2000/svg'><filter id='a'><feTurbulence baseFrequency='0.0025 0.005' seed='2'/><feDiffuseLighting lighting-color='#1e235e' surfaceScale='100'><feDistantLight azimuth='2' elevation='20'/></feDiffuseLighting></filter><rect width='100%' height='100%' filter='url(#a)'/></svg>

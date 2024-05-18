@@ -1,0 +1,61 @@
+---
+const {
+	title = "",
+	tag = "section",
+	decorative = false,
+	...rest
+} = Astro.props as Props;
+
+interface Props {
+	tag?: String,
+	title?: string,
+	decorative?: boolean,
+	[key: string]: any,
+}
+
+const Element = tag;
+---
+
+<Element class="section" class:list={decorative && "decorative"} {...rest}>
+	{title && (
+		<h1 class="section-title">{title}</h1>
+	)}
+	<div class="section-contents">
+		<slot />
+	</div>
+</Element>
+
+<style>
+	.section {
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		background: var(--background) url("/noise.png");
+		border: 1px solid var(--border);
+		box-shadow: 4px 4px 0 var(--border);
+		color: var(--foreground);
+		line-height: 1.25;
+	}
+	
+	.section-contents {
+		padding: 16px;
+	}
+	
+	.section.decorative .section-contents {
+		padding: 0;
+	}
+
+	.section-title {
+		position: relative;
+		margin: 0;
+		font-weight: normal;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		color: var(--foreground);
+		font-size: 10px;
+		text-transform: uppercase;
+		padding: 8px 16px;
+		border-bottom: 1px dotted var(--border);
+	}
+</style>
